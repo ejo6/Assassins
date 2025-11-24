@@ -201,29 +201,31 @@ public class Round {
         return null;
     }
 
-    // <WORKSITE>: GETTING TOP PLAYERS
-
     public Player[] getTopPlayers(int topN) {
         Player[] topPlayers = new Player[topN];
-        ArrayList<Player> players = head.linkedToArrayList(gameSize);
         
         // Initialize priority queue with objective of comparing kills of each player
         PriorityQueue<Player> minHeap = new PriorityQueue<>(Comparator.comparingInt(Player::getNumKills));
         
-
-        for (Player player : players) {
-            int numKills = player.getNumKills();
-            if (minHeap.size() < topN) {
-                minHeap.add(player); // always add to correct place if heap isnt full
-            } else if (numKills > minHeap.peek().getNumKills()) {
-                // Case of num kills being bigger than the smallest number in the heap after filling
-                minHeap.poll();
-                minHeap.add(player);
-            }
-        }
-
-        // Copy into array (ascending)
+        GameNode<Player> curr = head;
         int i = 0;
+
+        // Priority Queue by comparing kill numbers (FIFO)
+        while (curr != null && i < gameSize) {
+            Player player = curr.getData();
+            int numKills = player.getNumKills();
+            if (minHeap.size() < topN) { // always add player if queue isnt even full
+                minHeap.add(player);
+            } else if (numKills > minHeap.peek().getNumKills()) { 
+                minHeap.poll(); // remove lowest kills
+                minHeap.add(player); // put player in respective location
+            }
+            curr = curr.getNext();
+            i++;
+        } 
+
+        i = 0;
+        // Copy into array (ascending)
         for (Player player : minHeap) {
             topPlayers[i] = player;
             i++;
@@ -231,9 +233,6 @@ public class Round {
 
         return topPlayers;
     }
-
-
-    // </WORKSITE>
 
     public void storeRound() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
