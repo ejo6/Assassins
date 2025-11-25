@@ -113,8 +113,13 @@ public class Assassins extends Application {
                 return;
             }
             game.endRound(); // sets roundNum, saves JSON, increments roundNum
+
+            // Put the top 3 players in the output box
+            String top3 = game.listTop3Players();
+            outputArea.setText(top3);
+
             appendOutput("Stored round.");
-            refreshRoundDisplay();
+            // refreshRoundDisplay();
         });
 
         loadButton.setOnAction(e -> {

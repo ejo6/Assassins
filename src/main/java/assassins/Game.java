@@ -54,6 +54,25 @@ public class Game {
         this.roundNum = roundNumber + 1;
     }
 
+    public String listTop3Players() {
+        Player[] topPlayers = currRound.getTopPlayers(3);
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Top 3 Players: \n");
+
+        int rank = 1;
+        for (int i = topPlayers.length - 1; i >= 0; i--) {
+            Player player = topPlayers[i];
+            if (player == null) continue;
+            sb.append((rank) + ". " + player.getName() + ": " + player.getNumKills() + " kills\n");
+            rank++;
+        }
+
+        System.out.println(sb.toString());
+        return sb.toString();
+    }
+
+    // Testing
     public static void main(String[] args) {
         Game game = new Game("test-from-game", "src/main/resources/gameStart.txt");
         game.currRound.kill("Player 1");
@@ -65,6 +84,7 @@ public class Game {
         game.currRound.kill("Player 4");
         game.currRound.kill("Player 5");
         game.currRound.kill("Player 6");
+        game.listTop3Players();
         game.endRound();
         game.newRound();
         game.currRound.kill("Player 7");
